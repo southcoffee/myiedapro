@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script th:src="@{js/jquery-1.12.4.js}"></script>
+    <script type="text/javascript">
+        $(function(){
+            load();
+        });
+        function  load(){
+            var district=$("select[name='district']").val();
+            $("tr:gt(3)").remove();
+            $.ajax({
+                url:"airlist",
+                data:{"district":district},
+                type:"post",
+                dataType:"json",
+                success:function(data){
+                    var str="";
+                    $.each(data,function(i,val){
+                        str=str+"<tr class='air'>";
+                        str=str+"<td>"+val.id+"</td>";
+                        str=str+"<td>"+val.district+"</td>";
+                        str=str+"<td>"+val.monitorTime+"</td>";
+                        str=str+"<td>"+val.pm10+"</td>";
+                        str=str+"<td>"+val.pm25+"</td>";
+                        str=str+"<td>"+val.monitoringStation+"</td>";
+                        str=str+"</tr>";
+                    });
+                  $("tr:eq(3)").after(str);
+                  rows();
+                }
+            });
+
+        }
+        //隔行变色
+        function  rows() {
+          var $tr=$(".air");
+          for(var i=0;i<$tr.length;i++){
+              if(i%2==0){
+                  $($tr[i]).css("background-color","");
+              }else{
+                  $($tr[i]).css("background-color","blue");
+              }
+          }
+        }
+        function addair(){
+            window.location.href="addair";
+        }
+    </script>
+</head>
+<body>
+空气质量监测系统<br>
+<span th:text="${title}"></span>
+<table border="1">
+    <tr>
+        <td colspan="6">空气质量监测信息</td>
+    </tr>
+    <tr>
+        <td colspan="6" align="center">
+            <table>
+                <tr>
+                    <td>
+                    按区域查询
+                    <select th:name="district" th:value="${district}">
+                        <option value="请选择">请选择</option>
+                        <option value="东城区">东城区</option>
+                        <option value="西城区">西城区</option>
+                        <option value="海淀区">海淀区</option>
+                        <option value="朝阳区">朝阳区</option>
+                    </select>
+                        <button onclick="javascript:load();">查询</button>
+                    </td>
+                    <td>
+                        <button onclick="javascript:addair();">添加空气质量信息</button>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>编号</td>
+        <td>区域</td>
+        <td>检查时间</td>
+        <td>PM10数据</td>
+        <td>PM25数据</td>
+        <td>监测站</td>
+    </tr>
+</table>
+</body>
+</html>
